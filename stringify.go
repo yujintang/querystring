@@ -1,29 +1,24 @@
 package qs
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 )
 
-func Stringify(hash map[string]interface{}) (string, error) {
+func Stringify(hash map[string]interface{}) string {
 	return buildNestedQuery(hash, "", 10)
 }
 
-func buildNestedQuery(value interface{}, prefix string, deep int) (string, error) {
+func buildNestedQuery(value interface{}, prefix string, deep int) string {
 	components := ""
 
 	switch vv := value.(type) {
 	case []interface{}:
 		if deep < 0 {
-			return "", nil
+			return ""
 		}
 		for i, v := range vv {
-			component, err := buildNestedQuery(v, prefix+"[]", deep-1)
-
-			if err != nil {
-				return "", err
-			}
+			component := buildNestedQuery(v, prefix+"[]", deep-1)
 
 			components += component
 
@@ -34,7 +29,7 @@ func buildNestedQuery(value interface{}, prefix string, deep int) (string, error
 
 	case map[string]interface{}:
 		if deep < 0 {
-			return "", nil
+			return ""
 		}
 
 		for k, v := range vv {
@@ -46,11 +41,7 @@ func buildNestedQuery(value interface{}, prefix string, deep int) (string, error
 				childPrefix = url.QueryEscape(k)
 			}
 
-			component, err := buildNestedQuery(v, childPrefix, deep-1)
-
-			if err != nil {
-				return "", err
-			}
+			component := buildNestedQuery(v, childPrefix, deep-1)
 
 			if len(component) > 0 && len(components) > 0 {
 				components += "&"
@@ -60,7 +51,7 @@ func buildNestedQuery(value interface{}, prefix string, deep int) (string, error
 
 	case string:
 		if prefix == "" {
-			return "", fmt.Errorf("value must be a map[string]interface{}")
+			return ""
 		}
 
 		components += prefix + "=" + url.QueryEscape(vv)
@@ -70,5 +61,5 @@ func buildNestedQuery(value interface{}, prefix string, deep int) (string, error
 		components += prefix + "=" + url.QueryEscape(strconv.FormatFloat(vv, 'G', -1, 64))
 	default:
 	}
-	return components, nil
+	return components
 }

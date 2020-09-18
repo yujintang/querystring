@@ -18,11 +18,8 @@ func TestStringify(t *testing.T) {
 		},
 	}
 	str := Stringify(testMap)
-	if str == "a=1.123&b=string&c=true&d[]=1.123&d[]=string&d[]=true&e[b]=string&e[c]=true&e[d][]=1.123&e[d][]=string&e[d][]=true&e[a]=1.123" {
-		t.Error("Error Stringify")
-	} else {
-		t.Log("Success Stringify")
-	}
+	t.Log(testMap)
+	t.Log(str)
 }
 
 func BenchmarkStringify(b *testing.B) {

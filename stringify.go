@@ -1,6 +1,7 @@
 package qs
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 )
@@ -53,13 +54,25 @@ func buildNestedQuery(value interface{}, prefix string, deep int) string {
 		if prefix == "" {
 			return ""
 		}
-
-		components += prefix + "=" + url.QueryEscape(vv)
+		components += prefix + "=" + vv
 	case bool:
-		components += prefix + "=" + url.QueryEscape(strconv.FormatBool(vv))
+		components += prefix + "=" + strconv.FormatBool(vv)
+	case int:
+		components += prefix + "=" + strconv.Itoa(vv)
+	case int8:
+		components += prefix + "=" + strconv.FormatInt(int64(vv), 10)
+	case int16:
+		components += prefix + "=" + strconv.FormatInt(int64(vv), 10)
+	case int32:
+		components += prefix + "=" + strconv.FormatInt(int64(vv), 10)
+	case int64:
+		components += prefix + "=" + strconv.FormatInt(vv, 10)
+	case float32:
+		components += prefix + "=" + strconv.FormatFloat(float64(vv), 'f', -1, 32)
 	case float64:
-		components += prefix + "=" + url.QueryEscape(strconv.FormatFloat(vv, 'G', -1, 64))
+		components += prefix + "=" + strconv.FormatFloat(vv, 'f', -1, 64)
 	default:
+		components += prefix + "=" + fmt.Sprintf("%v",vv)
 	}
 	return components
 }

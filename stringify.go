@@ -27,7 +27,19 @@ func buildNestedQuery(value interface{}, prefix string, deep int) string {
 				components += "&"
 			}
 		}
+	case []string:
+		if deep < 0 {
+			return ""
+		}
+		for i, v := range vv {
+			component := buildNestedQuery(v, prefix+"[]", deep-1)
 
+			components += component
+
+			if i < len(vv)-1 {
+				components += "&"
+			}
+		}
 	case map[string]interface{}:
 		if deep < 0 {
 			return ""
